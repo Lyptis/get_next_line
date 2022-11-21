@@ -6,7 +6,7 @@
 /*   By: svanmeen <svanmeen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:19:31 by svanmeen          #+#    #+#             */
-/*   Updated: 2022/11/21 14:32:48 by svanmeen         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:44:32 by svanmeen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ static char	*ft_save(char *mem)
 {
 	static char	*new_mem;
 
-	if (!mem || (ft_strlen(mem) <= 1))
+	if (!mem || (ft_strlen(mem) < 1))
 		return (NULL);
 	new_mem = malloc((ft_strlen(mem) + 1) * sizeof(char));
-	ft_strlcpy(new_mem, mem, ft_strlen(mem) + 1);
+	ft_strncpy(new_mem, mem, ft_strlen(mem));
 	return (new_mem);
 }
 
