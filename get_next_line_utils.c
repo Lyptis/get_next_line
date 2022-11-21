@@ -6,7 +6,7 @@
 /*   By: svanmeen <svanmeen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 13:27:19 by svanmeen          #+#    #+#             */
-/*   Updated: 2022/11/19 16:20:04 by svanmeen         ###   ########.fr       */
+/*   Updated: 2022/11/21 14:57:39 by svanmeen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,50 +46,22 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 	return (i + ft_strlen(src));
 }
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+char	*ft_strdup(const char *s1)
 {
-	size_t	i;
+	char			*res;
+	unsigned int	i;
 
+	res = malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	if (!res)
+		return (res);
 	i = 0;
-	if (dstsize > 0)
+	while (s1[i] != '\0')
 	{
-		while (src[i] && i < dstsize - 1)
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = '\0';
-	}
-	return (ft_strlen(src));
-}
-
-static char	*ft_strcpy(char *dest, char *src)
-{
-	int	i;
-
-	i = 0;
-	while (src[i])
-	{
-		dest[i] = src[i];
+		res[i] = s1[i];
 		i++;
 	}
-	dest[i] = '\0';
-	return (dest);
-}
-
-char	*ft_strdup(const char *src)
-{
-	int		i;
-	char	*dest;
-
-	i = 0;
-	while (src[i])
-		i++;
-	dest = malloc(sizeof(char) * i + 1);
-	if (dest != (char *)0)
-		return (ft_strcpy(dest, (char *)src));
-	else
-		return (dest);
+	res[i] = '\0';
+	return (res);
 }
 
 char	*ft_strncpy(char *dest, char *src, unsigned int n)
