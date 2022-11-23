@@ -6,7 +6,7 @@
 /*   By: svanmeen <svanmeen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:19:31 by svanmeen          #+#    #+#             */
-/*   Updated: 2022/11/23 15:24:10 by svanmeen         ###   ########.fr       */
+/*   Updated: 2022/11/23 16:04:05 by svanmeen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ char	*get_next_line(int fd)
 	static char	*mem;
 	char		buf[BUFFER_SIZE + 1];
 	size_t		gnl_index;
-	static int	read_val;
+	int			read_val;
 
 	gnl_index = ft_get_line(mem);
 	while (!mem || mem[gnl_index] != '\n')
