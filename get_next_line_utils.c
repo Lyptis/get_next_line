@@ -6,7 +6,7 @@
 /*   By: svanmeen <svanmeen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 13:27:19 by svanmeen          #+#    #+#             */
-/*   Updated: 2022/11/21 14:57:39 by svanmeen         ###   ########.fr       */
+/*   Updated: 2022/11/23 14:25:29 by svanmeen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,31 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 	return (i + ft_strlen(src));
 }
 
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+
+	i = 0;
+	if (dstsize > 0)
+	{
+		while (src[i] && i < dstsize - 1)
+		{
+			dst[i] = src[i];
+			i++;
+		}
+		dst[i] = '\0';
+	}
+	return (0);
+}
+
 char	*ft_strdup(const char *s1)
 {
-	char			*res;
-	unsigned int	i;
+	char	*res;
+	size_t	i;
 
 	res = malloc(sizeof(char) * (ft_strlen(s1) + 1));
 	if (!res)
-		return (res);
+		return (NULL);
 	i = 0;
 	while (s1[i] != '\0')
 	{
@@ -64,9 +81,9 @@ char	*ft_strdup(const char *s1)
 	return (res);
 }
 
-char	*ft_strncpy(char *dest, char *src, unsigned int n)
+char	*ft_strncpy(char *dest, char *src, size_t n)
 {
-	unsigned int	i;
+	size_t	i;
 
 	i = 0;
 	while (src[i] != '\0' && i < n)

@@ -6,90 +6,131 @@
 /*   By: svanmeen <svanmeen@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/17 15:19:31 by svanmeen          #+#    #+#             */
-/*   Updated: 2022/11/21 15:39:36 by svanmeen         ###   ########.fr       */
+/*   Updated: 2022/11/23 15:24:10 by svanmeen         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int	ft_get_nl(char *mem)
+static size_t	ft_get_line(char *mem)
 {
-	int	i;
+	size_t	index;
 
-	i = 0;
+	index = 0;
 	if (!mem)
-		return (-1);
-	while (mem[i] != '\n' && mem[i] != '\0')
-		i++;
-	if (mem[i] == '\n')
-		return (i);
-	if (mem[1] == '\n')
 		return (0);
-	else
-		return (-1);
+	while (mem[index])
+	{
+		if (mem[index] == '\n')
+			return (index);
+		index++;
+	}
+	return (index);
 }
 
-static char	*ft_mem_new(char *buf, char *mem)
+static char	*ft_new(char *mem, char *buf)
 {
-	static char	*new_mem;
+	static char		*new_mem;
+	char			*temp;
+	size_t			max_size;
 
 	if (!mem)
-		return (ft_strdup(buf));
-	new_mem = malloc((ft_strlen(buf) + ft_strlen(mem) + 1) * sizeof(char));
+	{
+		temp = ft_strdup(buf);
+		if (!temp)
+			return (NULL);
+		return (temp);
+	}
+	max_size = ft_strlen(mem) + BUFFER_SIZE + 1;
+	new_mem = malloc((max_size) * sizeof(char));
 	if (!new_mem)
+	{
+		if (mem)
+			free(mem);
+		mem = NULL;
 		return (NULL);
-	ft_strncpy(new_mem, mem, ft_strlen(mem) + 1);
-	ft_strlcat(new_mem, buf, ft_strlen(buf) + ft_strlen(mem) + 1);
-	if (mem)
-		free(mem);
+	}
+	new_mem = ft_strncpy(new_mem, mem, ft_strlen(mem) + 1);
+	ft_strlcat(new_mem, buf, max_size);
+	free(mem);
 	return (new_mem);
 }
 
-static char	*ft_save(char *mem)
+static char	*ft_save(char *mem, int gnl_index)
 {
 	static char	*new_mem;
+	size_t		size;
 
-	if (!mem || (ft_strlen(mem) < 1))
+	if (!mem[gnl_index])
+	{
+		free(mem);
 		return (NULL);
-	new_mem = malloc((ft_strlen(mem) + 1) * sizeof(char));
-	ft_strncpy(new_mem, mem, ft_strlen(mem));
+	}
+	size = ft_strlen(mem);
+	new_mem = malloc((size - gnl_index + 2) * sizeof(char));
+	if (!new_mem)
+	{
+		if (mem)
+			free(mem);
+		mem = NULL;
+		return (NULL);
+	}
+	new_mem = ft_strncpy(new_mem, &mem[gnl_index], size - gnl_index + 1);
+	free(mem);
 	return (new_mem);
 }
 
-static char	*ft_check(int b_r, char **mem)
+static char	*ft_check(char **mem, int read_val)
 {
-	char	*temp;
+	char	*str;
+	int		gnl_index;
 
-	if (b_r < 0 || !*mem)
+	if (!*mem || read_val < 0)
+	{
+		if (*mem)
+			free(*mem);
+		*mem = NULL;
 		return (NULL);
-	temp = malloc((ft_strlen(*mem) + 1) * sizeof(char));
-	ft_strncpy(temp, *mem, ft_strlen(*mem));
-	*mem = NULL;
-	return (temp);
+	}
+	gnl_index = ft_get_line(*mem);
+	str = malloc((gnl_index + 1) * sizeof(char));
+	if (!str)
+	{
+		if (*mem)
+			free(*mem);
+		*mem = NULL;
+		return (NULL);
+	}
+	ft_strlcpy(str, *mem, gnl_index + 2);
+	*mem = ft_save(*mem, gnl_index);
+	return (str);
 }
 
 char	*get_next_line(int fd)
 {
+	char		*str;
 	static char	*mem;
-	char		*temp;
 	char		buf[BUFFER_SIZE + 1];
-	int			b_r;
-	int			i_before_nl;
+	size_t		gnl_index;
+	static int	read_val;
 
-	i_before_nl = -1;
-	while (i_before_nl < 0)
+	gnl_index = ft_get_line(mem);
+	while (!mem || mem[gnl_index] != '\n')
 	{
-		b_r = read(fd, buf, BUFFER_SIZE);
-		if (b_r <= 0)
-			return (ft_check(b_r, &mem));
-		buf[b_r] = '\0';
-		mem = ft_mem_new(buf, mem);
-		i_before_nl = ft_get_nl(mem);
+		read_val = read(fd, buf, BUFFER_SIZE);
+		if (read_val <= 0)
+			return (ft_check(&mem, read_val));
+		buf[read_val] = '\0';
+		mem = ft_new(mem, buf);
+		gnl_index = ft_get_line(mem);
 	}
-	temp = malloc((i_before_nl + 1) * sizeof(char));
-	temp = ft_strncpy(temp, mem, i_before_nl);
-	mem = ft_save(mem + i_before_nl + 1);
-	if (temp[0] == '\n')
-		return (NULL);
-	return (temp);
+	str = malloc((gnl_index + 2) * sizeof(char));
+	if (!str)
+	{
+		free(mem);
+		return (mem = NULL, NULL);
+	}
+	ft_strlcpy(str, mem, gnl_index + 2);
+	mem = ft_save(mem, gnl_index + 1);
+	return (str);
 }
